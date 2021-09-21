@@ -33,9 +33,29 @@ const updateStatusContactValidation = (req, res, next) => {
   });
   checkValidation(schema, req, res, next);
 };
+const authorizationValidation = (req, res, next) => {
+  const schema = Joi.object({
+    password: Joi.string().min(3).max(30).required(),
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+      })
+      .required(),
+  });
+  checkValidation(schema, req, res, next);
+};
+
+const subscriptionValidation = (req, res, next) => {
+  const schema = Joi.object({
+    subscription: Joi.string().valid("starter", "pro", "business").required(),
+  });
+  checkValidation(schema, req, res, next);
+};
 
 module.exports = {
   validationData,
   updateContactValidation,
   updateStatusContactValidation,
+  authorizationValidation,
+  subscriptionValidation,
 };
