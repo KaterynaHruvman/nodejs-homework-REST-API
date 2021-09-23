@@ -49,15 +49,19 @@ const login = async ({ email, password }) => {
 };
 
 const logout = async ({ userId, token }) => {
-  const logoutUser = await User.findOne(
-    { _id: userId, token },
-    { $set: { token: null } },
-    { new: true }
-  );
-  if (!logoutUser) {
-    throw new NotAuthorized("Not authorized");
-  }
+  try {
+    const logoutUser = await User.findOne(
+      { _id: userId, token },
+      { $set: { token: null } },
+      { new: true }
+    );
+    if (!logoutUser) {
+      throw new NotAuthorized("Not authorized");
+    }
+    return logoutUser();
+  } catch (error) {}
 };
+
 const getCurrentUser = async ({ userId, token }) => {
   const currentUser = await User.findById({ _id: userId, token });
 
@@ -68,15 +72,17 @@ const getCurrentUser = async ({ userId, token }) => {
   return currentUser;
 };
 const updateSubscription = async ({ token, subscription }, userId) => {
-  const updateUserSubscription = await User.findById(
-    { _id: userId, token },
-    { $set: { subscription } },
-    { new: true }
-  );
-  if (!updateUserSubscription) {
-    throw new NotAuthorized("Not authorized");
-  }
-  return updateUserSubscription;
+  try {
+    const updateUserSubscription = await User.findById(
+      { _id: userId, token },
+      { $set: { subscription } },
+      { new: true }
+    );
+    if (!updateUserSubscription) {
+      throw new NotAuthorized("Not authorized");
+    }
+    return updateUserSubscription;
+  } catch (error) {}
 };
 module.exports = {
   registration,
