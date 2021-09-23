@@ -16,7 +16,7 @@ const registration = async ({ email, password }) => {
     password,
   });
   const newUser = await user.save();
-  // await user.save()
+
   return { email: newUser.email, subscription: newUser.subscription };
 };
 const login = async ({ email, password }) => {
@@ -27,9 +27,8 @@ const login = async ({ email, password }) => {
   if (!user) {
     throw new NotAuthorized("Email  is wrong");
   }
-  // if (!await bcrypt.compare(password, user.password)) {
-  // if (await bcrypt.compare(password, user.password)) {
-  if (!(password === user.password)) {
+
+  if (password !== user.password) {
     console.log("password:  ", password);
     throw new NotAuthorized("Password is wrong");
   }
@@ -50,7 +49,7 @@ const login = async ({ email, password }) => {
 };
 
 const logout = async ({ userId, token }) => {
-  const logoutUser = await User.findOneAndUpdate(
+  const logoutUser = await User.findOne(
     { _id: userId, token },
     { $set: { token: null } },
     { new: true }
@@ -60,7 +59,7 @@ const logout = async ({ userId, token }) => {
   }
 };
 const getCurrentUser = async ({ userId, token }) => {
-  const currentUser = await User.findOne({ _id: userId, token });
+  const currentUser = await User.findById({ _id: userId, token });
 
   console.log("currentUser", currentUser);
   if (!currentUser) {
@@ -69,7 +68,7 @@ const getCurrentUser = async ({ userId, token }) => {
   return currentUser;
 };
 const updateSubscription = async ({ token, subscription }, userId) => {
-  const updateUserSubscription = await User.findByIdAndUpdate(
+  const updateUserSubscription = await User.findById(
     { _id: userId, token },
     { $set: { subscription } },
     { new: true }
