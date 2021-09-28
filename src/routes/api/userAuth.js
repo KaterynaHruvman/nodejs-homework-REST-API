@@ -1,19 +1,20 @@
 const express = require("express");
 const router = express.Router();
-
+const ctrl = require("../../model/user");
 const {
   authorizationValidation,
   subscriptionValidation,
 } = require("../../middlwarer/validation");
 const { asyncWrapper } = require("../../helpers/apiHelpers");
 const { authMiddleware } = require("../../middlwarer/authMiddleware");
-
+const upload = require("../../helpers/upload");
 const {
   registrationController,
   loginController,
   logoutController,
   getCurrentUserController,
   updateSubscriptionController,
+  udateAvatar,
 } = require("../../controllers/userControllers");
 
 router.post(
@@ -30,5 +31,6 @@ router.patch(
   subscriptionValidation,
   asyncWrapper(updateSubscriptionController)
 );
+router.patch("/avatars", authMiddleware, upload.single("avatar"), ctrl.avatars);
 
 module.exports = router;
