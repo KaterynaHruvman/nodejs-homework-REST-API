@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs").promises;
 const jimp = require("jimp");
+const EmailService = require("../services/email");
+
 // const imageNormalize = require("../../utils/imageNormalize");
 const UploadAvatarService = require("../services/local-upload");
 const { User } = require("../db/usersModel");
@@ -10,7 +12,41 @@ const {
   NotAuthorized,
   RegistrationConflictError,
 } = require("../helpers/errors");
+// const registration = async (req, res, next) => {
+//   try {
+//     const user = await Users.findByEmail(req.body.email);
 
+//     if (user) {
+//       return res.status(HttpCode.CONFLICT).json({
+//         status: "error",
+//         code: HttpCode.CONFLICT,
+//         message: "Email is already used",
+//       });
+//     }
+
+//     const { id, name, email, gender, avatar, verifyToken } = await Users.create(
+//       req.body
+//     );
+
+//     try {
+//       const emailService = new EmailService(
+//         process.env.NODE_ENV,
+//         new CreateSenderSendGrid()
+//       );
+//       await emailService.sendVerifyEmail(verifyToken, email, name);
+//     } catch (error) {
+//       console.log(error.message);
+//     }
+
+//     return res.status(HttpCode.CREATED).json({
+//       status: "success",
+//       code: HttpCode.CREATED,
+//       data: { id, name, email, avatar },
+//     });
+//   } catch (e) {
+//     next(e);
+//   }
+// };
 const registration = async ({ email, password }) => {
   const existEmail = await User.findOne({ email });
   if (existEmail) {
@@ -112,6 +148,7 @@ const avatars = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   registration,
   login,

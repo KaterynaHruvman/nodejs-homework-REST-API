@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const gr = require("gravatar");
 const bcrypt = require("bcrypt");
+const { nanoid } = require("nanoid");
 
 const userSchema = new mongoose.Schema({
   password: {
@@ -24,6 +25,14 @@ const userSchema = new mongoose.Schema({
   idCloudAvatar: {
     type: String,
     default: null,
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verifyToken: {
+    type: String,
+    required: nanoid[(true, "Verify token is required")],
   },
 });
 userSchema.pre("save", async function () {
