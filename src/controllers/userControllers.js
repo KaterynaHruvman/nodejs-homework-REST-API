@@ -4,6 +4,7 @@ const {
   logout,
   getCurrentUser,
   updateSubscription,
+  avatars,
 } = require("../model/user");
 
 const registrationController = async (req, res, next) => {
@@ -39,10 +40,17 @@ const updateSubscriptionController = async (req, res, next) => {
   const currentUser = await updateSubscription({ token, subscription }, userId);
   res.status(200).json({ currentUser });
 };
+//Idcloudavatar поемнять на локальный
+
+const updateAvatar = async (id, avatar, dCloudAvatar = null) => {
+  return await User.updateOne({ _id: id }, { avatar, idCloudAvatar });
+};
+
 module.exports = {
   registrationController,
   loginController,
   logoutController,
   getCurrentUserController,
   updateSubscriptionController,
+  updateAvatar,
 };

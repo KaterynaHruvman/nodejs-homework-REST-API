@@ -1,5 +1,10 @@
+const bcrypt = require("bcrypt"); //
 const jwt = require("jsonwebtoken");
-
+const path = require("path");
+const fs = require("fs").promises;
+const jimp = require("jimp");
+// const imageNormalize = require("../../utils/imageNormalize");
+const UploadAvatarService = require("../services/local-upload");
 const { User } = require("../db/usersModel");
 const {
   NotAuthorized,
@@ -17,7 +22,11 @@ const registration = async ({ email, password }) => {
   });
   const newUser = await user.save();
 
-  return { email: newUser.email, subscription: newUser.subscription };
+  return {
+    email: newUser.email,
+    subscription: newUser.subscription,
+    avatar: newUser.avatar,
+  };
 };
 const login = async ({ email, password }) => {
   const user = await User.findOne({ email });
@@ -84,10 +93,30 @@ const updateSubscription = async ({ token, subscription }, userId) => {
     return updateUserSubscription;
   } catch (error) {}
 };
+
+const avatars = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const uploads = new UploadAvatarService(process.env.AVATAR_OF_USERS);
+    const avatarUrl = await uploads.saveAvatar({ idUser: id, file: req.file });
+
+    try {
+      await fs.unlink(path.join(process.env.AVATAR_OF_USERS, req.user.avatar));
+    } catch (e) {
+      console.log(e.message);
+    }
+
+    await Users.updateAvatar(id, avatarUrl);
+    res.json({ status: "success", code: 200, data: { avatarUrl } });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   registration,
   login,
   logout,
   getCurrentUser,
   updateSubscription,
+  avatars,
 };

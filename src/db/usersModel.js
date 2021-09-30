@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const gr = require("gravatar");
 const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
@@ -17,6 +18,10 @@ const userSchema = new mongoose.Schema({
     default: "starter",
   },
   token: {
+    type: String,
+    default: null,
+  },
+  idCloudAvatar: {
     type: String,
     default: null,
   },
